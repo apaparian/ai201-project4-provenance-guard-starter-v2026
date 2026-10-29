@@ -69,7 +69,7 @@
 Predictability, or its inverse, perplexity. It analyzes how predictable the text is to the local language model, or whether it would have created a similar string of words when prompted.
 
 **Why that might differ between human and AI writing:**
-A language model chooses each token based on the researched likelihood with which it appears after the token before it. Human writing is spontaneous.
+A language model chooses each token based on the researched likelihood with which it appears after the token before it. Patterns are highly predicatable. Human writing is spontaneous, less predictable.
 
 **What it can't see:**
 A human being can write in a predictive matter. An individual with less mastery of the language, or other load-bearing markers of lower confidence, may air on writing in a highly predictive and generic manner.
@@ -80,10 +80,10 @@ A human being can write in a predictive matter. An individual with less mastery 
 Style. It counts characterstics such as sentence length, repetition of vocabulary, and punctuation patterns.
 
 **Why that might differ between human and AI writing:**
-Model generated output is biased towards sentences of even length, that follow regular patterns. A human agent has higher propensity towards irregularity.
+Model generated output is biased towards sentences of even length. They follow regular patterns. A human agent has a propensity towards irregularity. The latter either follows a pattern distinct from agent behavior, or none at all.
 
 **What it can't see:**
-A model can be designed or prompted to introduce irregularities, to vary sentence length, to introduce unique vocabulary terms, and to intentionally create grammatical errors in its placement of punctuation marks.
+A model can be prompted to introduce irregularities, vary sentence length, introduce unique vocabulary terms, and  intentionally create grammatical errors in its placement of punctuation. This may disguise the source as human.
 
 ### The combining rule
 

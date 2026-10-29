@@ -39,7 +39,19 @@
 <!-- The path a submission takes, from arriving to the label a reader sees.
      Six or seven steps — this is the trace you wrote in Milestone 1. -->
 
+1. POST /submit: A user submits a piece of text and a creator_id to the POST /submit endpoint.
 
+2. Validation: The service validates the request and creates a unique content_id.
+
+3. detector.py::model_signal: The text is passed through a local language model (GPT-2), which measures how predictable the text is. More predictable text receives a higher score and is treated as more AI-like.
+
+4. stylometry.py::style_signal: The text is analyzed based on writing patterns such as sentence-length variation, vocabulary diversity, and punctuation use, without considering meaning. It produces a score on the same 0–1 scale as the model signal.
+
+5. scoring.py::combine_signals: The model score and style score are combined into a combined confidence score between 0 and 1, where higher values indicate a greater likelihood of AI-generated text.
+
+6. scoring.py::score_to_label: The combined score is compared against the thresholds in config.py and converted into a guess (human, unsure, or ai) and the reader-facing label text.
+
+7. audit.py::log_decision: The content_id, both signal scores, the combined score, the final label, and a status of "decided" are written to the audit log. The service then returns the result to the user, and the content_id can later be used by /appeal to locate the decision.
 
 ---
 
@@ -54,18 +66,24 @@
 ### Signal one — the model signal
 
 **What it measures:**
+Predictability, or its inverse, perplexity. It analyzes how predictable the text is to the local language model, or whether it would have created a similar string of words when prompted.
 
 **Why that might differ between human and AI writing:**
+A language model chooses each token based on the researched likelihood with which it appears after the token before it. Human writing is spontaneous.
 
 **What it can't see:**
+A human being can write in a predictive matter. An individual with less mastery of the language, or other load-bearing markers of lower confidence, may air on writing in a highly predictive and generic manner.
 
 ### Signal two — the style signal
 
 **What it measures:**
+Style. It counts characterstics such as sentence length, repetition of vocabulary, and punctuation patterns.
 
 **Why that might differ between human and AI writing:**
+Model generated output is biased towards sentences of even length, that follow regular patterns. A human agent has higher propensity towards irregularity.
 
 **What it can't see:**
+A model can be designed or prompted to introduce irregularities, to vary sentence length, to introduce unique vocabulary terms, and to intentionally create grammatical errors in its placement of punctuation marks.
 
 ### The combining rule
 

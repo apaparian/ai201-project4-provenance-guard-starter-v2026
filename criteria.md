@@ -46,6 +46,7 @@ Two things worth knowing before you pick numbers:
 
 <!-- Your criterion. It must name a number. -->
 
+At most 1 of 10 self-written pieces is labeled high-confidence AI in any run.
 
 
 **Why this target:**
@@ -58,6 +59,7 @@ Two things worth knowing before you pick numbers:
 
 <!-- Your criterion. -->
 
+The median AI score is at least 0.20 above the median human score.
 
 
 **Why this target:**
@@ -70,6 +72,7 @@ Two things worth knowing before you pick numbers:
 
 <!-- Your criterion. -->
 
+All three labels appear across at least nine deliberately chosen submissions.
 
 
 **Why this target:**
@@ -82,6 +85,7 @@ Two things worth knowing before you pick numbers:
 
 <!-- Your criterion. -->
 
+Every appeal changes status to `under_review` and creates an audit entry without altering the original decision.
 
 
 **Why this target:**
@@ -94,6 +98,7 @@ Two things worth knowing before you pick numbers:
 
 <!-- Your criterion. -->
 
+Missing, null, blank, and over-10,000-character text receive `4xx` responses with no score and a logged rejection.
 
 
 **Why this target:**

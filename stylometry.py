@@ -64,9 +64,15 @@ def sentence_length_spread(text: str) -> float:
     `stdev` raises on fewer than two values. Decide what that should return
     before the attack set decides for you.
     """
-    # TODO: replace this
-    return 0.0
+    lengths = [len(words(s)) for s in sentences(text)]
+    if len(lengths) < 2:
+        return 0.0
 
+    mean_length = statistics.mean(lengths)
+    if mean_length == 0:
+        return 0.0
+
+    return statistics.stdev(lengths) / mean_length
 
 def type_token_ratio(text: str) -> float:
     """
@@ -80,9 +86,11 @@ def type_token_ratio(text: str) -> float:
     directly comparable on it, and if your test inputs vary a lot in length,
     that alone can look like a signal.
     """
-    # TODO: replace this
-    return 0.0
+    tokens = words(text)
+    if not tokens:
+        return 0.0
 
+    return len(set(tokens)) / len(tokens)
 
 def punctuation_density(text: str) -> float:
     """
@@ -94,9 +102,13 @@ def punctuation_density(text: str) -> float:
         more interesting than full stops, because they vary more between
         writers.
     """
-    # TODO: replace this
-    return 0.0
+    punc_count = len(re.findall(r"[^\w\s.]", text))
 
+    char_count = len(re.findall(r"\S", text))
+    if char_count == 0:
+        return 0.0
+
+    return punc_count / char_count
 
 # ── Combining them ───────────────────────────────────────────────────────────
 

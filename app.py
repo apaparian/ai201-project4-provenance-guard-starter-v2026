@@ -202,8 +202,10 @@ def submit():
     what should this do when `text` is missing, empty, or enormous? A crash on
     a malformed input is one of the most common real failures there is.
     """
-    payload = request.get_json(silent=True) or {}
-
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        payload = {}
+        
     content_id = str(uuid.uuid4())
     creator_id = payload.get("creator_id")
     

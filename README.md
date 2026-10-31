@@ -234,15 +234,15 @@ $ curl "http://127.0.0.1:5000/log?limit=2"
 
 **Moment 1**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Help figuring out a good order for implementing Milestone 3.
+- *What came back:* A suggestion to start by testing the hardcoded `/submit` route, then add the detector, and finally verify that submissions were being written to the audit log correctly.
+- *What I changed:* Instead of trying to build everything at once, I worked through the pieces one at a time. That made it easier to find mistakes and confirm that the `content_id` returned by `/submit` matched the one stored in the log.
 
 **Moment 2**
 
-- *What I asked for:*
-- *What came back:*
-- *What I changed:*
+- *What I asked for:* Feedback on whether my scoring and labeling choices made sense.
+- *What came back:* Ideas for label wording, handling uncertain cases, and different ways to combine the model and style signals.
+- *What I changed:* I compared the suggestions against my sample texts and chose a weighted average that gives slightly more influence to the model signal. I also rewrote the labels several times so the results would read more naturally to someone who submitted a piece of writing, especially for the unsure case.
 
 <!-- ═══════════════════════ UNIT 8 — THE TEST ═══════════════════════ -->
 

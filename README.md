@@ -142,11 +142,19 @@ A model can be prompted to introduce irregularities, vary sentence length, intro
 ```bash
 $ curl -X POST http://127.0.0.1:5000/submit \
   -H "Content-Type: application/json" \
-  -d '{"text": "...", "creator_id": "..."}'
+  -d '{"text": "This is a sufficiently long piece of writing that the local detector can score it reliably. It contains several sentences and expresses an ordinary idea in a natural way.", "creator_id": "student-1"}'
 ```
 
 ```json
 
+{
+  "confidence": null,
+  "content_id": "3597bf85-018f-4fe7-9f39-02591aa447b9",
+  "guess": null,
+  "label": null,
+  "model_score": 0.2342,
+  "style_score": null
+}
 ```
 
 **An appeal**
@@ -169,6 +177,22 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
 
 ```json
 
+{
+  "count": 1,
+  "entries": [
+    {
+      "combined_score": null,
+      "content_id": "3597bf85-018f-4fe7-9f39-02591aa447b9",
+      "creator_id": "student-1",
+      "guess": null,
+      "label": null,
+      "model_score": 0.2342,
+      "status": "decided",
+      "style_score": null,
+      "timestamp": "2026-10-31T20:22:33+00:00"
+    }
+  ]
+}
 ```
 
 ---

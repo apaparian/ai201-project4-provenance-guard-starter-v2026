@@ -77,7 +77,7 @@ A human being can write in a predictive matter. An individual with less mastery 
 ### Signal two — the style signal
 
 **What it measures:**
-Style. It counts characterstics such as sentence length, repetition of vocabulary, and punctuation patterns.
+Style. It counts characterstics such as sentence length, repetition of vocabulary, and punctuation patterns. They combine together with weights of 0.6, 0.3, and 0.1, respectively.
 
 **Why that might differ between human and AI writing:**
 Model generated output is biased towards sentences of even length. They follow regular patterns. A human agent has a propensity towards irregularity. The latter either follows a pattern distinct from agent behavior, or none at all.
@@ -91,16 +91,36 @@ A model can be prompted to introduce irregularities, vary sentence length, intro
      signals disagree? -->
 
 **The rule:**
+A weighted average of the two signals. Both point in the same direction (higher means more likely AI), so the combined score does too. The model signal gets slightly more weight (0.6) than the style signal (0.4) because, in the examples below, it separates the clearly AI text from the human texts more consistently. When the signals disagree, the combined score still falls between them, but it leans somewhat toward the model signal.
 
 **The numbers:**
+| Sample | Model score | Style score | Combined |
+|---|---|---|---|
+| Clearly human | 0.5195 | 0.5238 | 0.5212 |
+| Lightly edited AI | 0.3669 | 0.1620 | 0.2849 |
+| Formal human | 0.4785 | 0.5565 | 0.5097 |
+| Clearly AI | 0.7554 | 0.4063 | 0.6158 |
 
-**Where it lives:** `scoring.py::combine_signals`
+Clearly human:
+Our last trip went very well. We stayed in Yucca Valley and had our own affordable Airbnb house. We drove to Joshua Tree from there. I'm not seeing a similar affordable housing area for Zion. And they don't have the same views, do they? Are the scenic views at Zion limited to the park trails?
+
+Lightly edited AI:
+I'd like to make a Partiful event for when he's in town and back in LA. It'll also be my birthday. The only thing is, we're going to a ticketed club event rather than hosting a pre-party, and I haven't really seen Partiful used that way before, as more of a come meet us at this other event invite.
+
+Formal human:
+The 1984 Summer Games propelled the Olympics into the future with visible gender equity on the field and record-breaking participation from 140 nations. For the first time, female runners competed in the marathon, leading to American Joan Benoit taking home the gold.
+
+Clearly AI:
+The implementation of sustainable urban transportation requires careful consideration of several important factors. By investing in reliable public transit, expanding pedestrian infrastructure, and encouraging alternative forms of mobility, cities can reduce congestion and improve overall quality of life. These strategies also support environmental sustainability and create more efficient communities for future generations.
+
+
+**Where it lives:** `scoring.py::combine_signals` and `config.py`
 
 <!-- ⚠️ The grader checks your code against that line. If your rule lives
      somewhere else, say where. -->
 
 **A case where my two signals split, and what my rule does with it:**
-
+The clearly AI text (the urban transportation paragraph) produced the largest disagreement: 0.7554 from the model signal versus 0.4063 from the style signal. The style score is lower because the paragraph contains some variation in sentence length, which makes it look less AI-like according to the stylometry features. With a 0.6/0.4 weighted average, the combined score is 0.6158. This still lands between the two inputs, but it stays closer to the model signal because the model performed better on these examples. The tradeoff is that the system becomes somewhat more willing to flag AI-generated text, while still reducing the impact of any single signal.
 
 
 ---
@@ -142,18 +162,18 @@ A model can be prompted to introduce irregularities, vary sentence length, intro
 ```bash
 $ curl -X POST http://127.0.0.1:5000/submit \
   -H "Content-Type: application/json" \
-  -d '{"text": "This is a sufficiently long piece of writing that the local detector can score it reliably. It contains several sentences and expresses an ordinary idea in a natural way.", "creator_id": "student-1"}'
+  -d '{"text": "Our last trip went very well. We stayed in Yucca Valley and had our own affordable Airbnb house. We drove to Joshua Tree from there. I'm not seeing a similar affordable housing area for Zion. And they don't have the same views, do they? Are the scenic views at Zion limited to the park trails?", "creator_id": "student-1"}'
 ```
 
 ```json
 
 {
-  "confidence": null,
-  "content_id": "3597bf85-018f-4fe7-9f39-02591aa447b9",
+  "confidence": 0.5212334068741353,
+  "content_id": "73aeebee-4878-437b-88e4-1dea8cdf4a7c",
   "guess": null,
   "label": null,
-  "model_score": 0.2342,
-  "style_score": null
+  "model_score": 0.5195,
+  "style_score": 0.5238335171853384
 }
 ```
 
@@ -172,7 +192,7 @@ $ curl -X POST http://127.0.0.1:5000/appeal \
 **What the log shows afterwards**
 
 ```bash
-$ curl "http://127.0.0.1:5000/log?limit=3"
+$ curl "http://127.0.0.1:5000/log?limit=1"
 ```
 
 ```json
@@ -181,15 +201,15 @@ $ curl "http://127.0.0.1:5000/log?limit=3"
   "count": 1,
   "entries": [
     {
-      "combined_score": null,
-      "content_id": "3597bf85-018f-4fe7-9f39-02591aa447b9",
+      "combined_score": 0.5212334068741353,
+      "content_id": "73aeebee-4878-437b-88e4-1dea8cdf4a7c",
       "creator_id": "student-1",
       "guess": null,
       "label": null,
-      "model_score": 0.2342,
+      "model_score": 0.5195,
       "status": "decided",
-      "style_score": null,
-      "timestamp": "2026-10-31T20:22:33+00:00"
+      "style_score": 0.5238335171853384,
+      "timestamp": "2026-10-31T22:44:43+00:00"
     }
   ]
 }

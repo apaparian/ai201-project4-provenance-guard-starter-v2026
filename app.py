@@ -31,6 +31,8 @@ from flask import Flask, jsonify, request
 import audit
 import config
 import detector
+import stylometry
+import scoring
 
 app = Flask(__name__)
 
@@ -206,15 +208,19 @@ def submit():
     creator_id = payload.get("creator_id")
     
     text = payload.get("text")
-    model_score = detector.model_signal(text)
+    if not text:
+        return jsonify({"error": "no_text"}), 400
 
+    model_score = detector.model_signal(text)
+    style_score = stylometry.style_signal(text)
+    combined_score = scoring.combine_signals(model_score, style_score)
     audit.log_decision(
         content_id=content_id,
         creator_id=creator_id,
         guess=None,
         model_score=model_score,
-        style_score=None,
-        combined_score=None,
+        style_score=style_score,
+        combined_score=combined_score,
         label=None,
         status="decided",
     )
@@ -222,10 +228,10 @@ def submit():
     return jsonify({
         "content_id": content_id,
         "guess": None,
-        "confidence": None,
+        "confidence": combined_score,
         "label": None,
         "model_score": model_score,
-        "style_score": None,
+        "style_score": style_score,
     })
 
 @app.post("/appeal")

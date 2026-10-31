@@ -162,16 +162,16 @@ The unsure label is meant to communicate uncertainty without sounding like an ac
 ```bash
 $ curl -X POST http://127.0.0.1:5000/submit \
   -H "Content-Type: application/json" \
-  -d '{"text": "Our last trip went very well. We stayed in Yucca Valley and had our own affordable Airbnb house. We drove to Joshua Tree from there. I'm not seeing a similar affordable housing area for Zion. And they don't have the same views, do they? Are the scenic views at Zion limited to the park trails?", "creator_id": "student-1"}'
+  -d '{"text": "Our last trip went very well. We stayed in Yucca Valley and had our own affordable Airbnb house. We drove to Joshua Tree from there. I'\''m not seeing a similar affordable housing area for Zion. And they don'\''t have the same views, do they? Are the scenic views at Zion limited to the park trails?", "creator_id": "human-sample"}'
 ```
 
 ```json
 
 {
   "confidence": 0.5212334068741353,
-  "content_id": "73aeebee-4878-437b-88e4-1dea8cdf4a7c",
-  "guess": null,
-  "label": null,
+  "content_id": "e3b25598-9ed8-42b4-827f-07e1f500a508",
+  "guess": "unsure",
+  "label": "A confident determination could not be made. The result is uncertain.",
   "model_score": 0.5195,
   "style_score": 0.5238335171853384
 }
@@ -202,14 +202,14 @@ $ curl "http://127.0.0.1:5000/log?limit=1"
   "entries": [
     {
       "combined_score": 0.5212334068741353,
-      "content_id": "73aeebee-4878-437b-88e4-1dea8cdf4a7c",
-      "creator_id": "student-1",
-      "guess": null,
-      "label": null,
+      "content_id": "e3b25598-9ed8-42b4-827f-07e1f500a508",
+      "creator_id": "human-sample",
+      "guess": "unsure",
+      "label": "A confident determination could not be made. The result is uncertain.",
       "model_score": 0.5195,
       "status": "decided",
       "style_score": 0.5238335171853384,
-      "timestamp": "2026-10-31T22:44:43+00:00"
+      "timestamp": "2026-10-31T23:07:36+00:00"
     }
   ]
 }

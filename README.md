@@ -177,6 +177,46 @@ $ curl -X POST http://127.0.0.1:5000/submit \
 }
 ```
 
+**A submission labeled high-confidence AI**
+
+```bash
+$ curl -X POST http://127.0.0.1:5000/submit \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Artificial intelligence is a rapidly evolving field that has the potential to transform many industries. It is important to consider both the benefits and the challenges of this technology. Overall, artificial intelligence offers many opportunities for growth and innovation in the modern world.", "creator_id": "ai-sample"}'
+```
+
+```json
+
+{
+  "confidence": 0.803390046416437,
+  "content_id": "64d51f53-f2bb-4d38-8699-a80ceb5ebe59",
+  "guess": "ai",
+  "label": "This was likely written with AI assistance.",
+  "model_score": 0.9106,
+  "style_score": 0.6425751160410924
+}
+```
+
+**A submission labeled high-confidence human**
+
+```bash
+$ curl -X POST http://127.0.0.1:5000/submit \
+  -H "Content-Type: application/json" \
+  -d '{"text": "honestly no idea why i bought that lamp?? it'\''s ugly, my cat hates it, and yet — every night i switch it on like some weirdo. anyway. dinner was fine I guess", "creator_id": "casual-human-sample"}'
+```
+
+```json
+
+{
+  "confidence": 0.1643694888969996,
+  "content_id": "79dd75d7-7b31-4a2d-b3e4-b30269277c21",
+  "guess": "human",
+  "label": "This was likely written by a human author.",
+  "model_score": 0.1736,
+  "style_score": 0.15052372224249894
+}
+```
+
 **An appeal**
 
 ```bash

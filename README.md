@@ -182,23 +182,28 @@ $ curl -X POST http://127.0.0.1:5000/submit \
 ```bash
 $ curl -X POST http://127.0.0.1:5000/appeal \
   -H "Content-Type: application/json" \
-  -d '{"content_id": "...", "reasoning": "..."}'
-```
-
-```json
-
-```
-
-**What the log shows afterwards**
-
-```bash
-$ curl "http://127.0.0.1:5000/log?limit=1"
+  -d '{"content_id": "e3b25598-9ed8-42b4-827f-07e1f500a508", "reasoning": "I wrote this piece myself and would like the decision reviewed."}'
 ```
 
 ```json
 
 {
-  "count": 1,
+  "content_id": "e3b25598-9ed8-42b4-827f-07e1f500a508",
+  "message": "Your appeal has been recorded and the decision is now under review.",
+  "status": "under_review"
+}
+```
+
+**What the log shows afterwards**
+
+```bash
+$ curl "http://127.0.0.1:5000/log?limit=2"
+```
+
+```json
+
+{
+  "count": 2,
   "entries": [
     {
       "combined_score": 0.5212334068741353,
@@ -210,6 +215,14 @@ $ curl "http://127.0.0.1:5000/log?limit=1"
       "status": "decided",
       "style_score": 0.5238335171853384,
       "timestamp": "2026-10-31T23:07:36+00:00"
+    },
+    {
+      "content_id": "e3b25598-9ed8-42b4-827f-07e1f500a508",
+      "creator_id": "human-sample",
+      "event": "appeal",
+      "reasoning": "I wrote this piece myself and would like the decision reviewed.",
+      "status": "under_review",
+      "timestamp": "2026-10-31T23:18:22+00:00"
     }
   ]
 }

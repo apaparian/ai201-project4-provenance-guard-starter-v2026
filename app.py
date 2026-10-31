@@ -259,12 +259,29 @@ def appeal():
     """
     payload = request.get_json(silent=True) or {}
 
-    # TODO: delete this and build the route.
+    content_id = payload.get("content_id")
+    reasoning = payload.get("reasoning")
+
+    entries = audit.entries_for(content_id)
+    if not entries:
+        return jsonify({
+            "error": "not_found",
+            "message": f"No decision found for content_id {content_id}.",
+        }), 404
+
+    creator_id = entries[0].get("creator_id")
+
+    audit.log_appeal(
+        content_id=content_id,
+        creator_id=entries[0].get("creator_id"),
+        reasoning=reasoning,
+    )
+
     return jsonify({
-        "error": "not_implemented",
-        "message": "POST /appeal isn't built yet — see the TODO in app.py.",
-        "you_sent": payload,
-    }), 501
+        "content_id": content_id,
+        "status": "under_review",
+        "message": "Your appeal has been recorded and the decision is now under review.",
+    })
 
 
 # ── Already works ─────────────────────────────────────────────────────────────

@@ -208,8 +208,15 @@ def submit():
     creator_id = payload.get("creator_id")
     
     text = payload.get("text")
-    if not text:
-        return jsonify({"error": "no_text"}), 400
+
+    if not isinstance(text, str) or not text.strip():
+        audit.log_rejection(creator_id=creator_id, reason="missing_or_blank_text")
+        return jsonify({"error": "no_text", "message": "Send non-empty text."}), 400
+
+    if len(text) > 10000:
+        audit.log_rejection(creator_id=creator_id, reason="text_too_long", length=len(text))
+        return jsonify({"error": "text_too_long", "message": f"Text must be 10000 characters or fewer."}), 413
+
 
     model_score = detector.model_signal(text)
     style_score = stylometry.style_signal(text)

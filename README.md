@@ -134,15 +134,15 @@ The clearly AI text (the urban transportation paragraph) produced the largest di
 
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
-| high-confidence human |  |  |
-| unsure |  |  |
-| high-confidence AI |  |  |
+| high-confidence human | 0.00-0.35 | This was likely written by a human author. |
+| unsure | 0.35-0.65 | A confident determination could not be made. This result is uncertain. |
+| high-confidence AI | 0.65-1.00 | This was likely written with AI assistance. |
 
 **Why I worded the "unsure" one this way:**
 <!-- It's the hardest of the three. It has to admit uncertainty without
      sounding like an accusation, because the person reading it may well have
      written every word themselves. -->
-
+The unsure label is meant to communicate uncertainty without sounding like an accusation. It explains that the system could not reach a conclusion. It leaves room for interpretation.
 
 
 ---

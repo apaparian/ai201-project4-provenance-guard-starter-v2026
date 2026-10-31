@@ -51,7 +51,7 @@ At most 1 of 10 self-written pieces is labeled high-confidence AI in any run.
 
 **Why this target:**
 
-
+A false positive is the most expensive mistake this system can make. Missing some AI-generated writing is less harmful than confidently accusing human writing of being AI-generated.
 
 ---
 
@@ -64,7 +64,7 @@ The median AI score is at least 0.20 above the median human score.
 
 **Why this target:**
 
-
+The scores do not need to be perfectly separated, but there should be a noticeable gap between human and AI writing. If the two groups receive nearly identical scores, the confidence score is not very useful.
 
 ---
 
@@ -77,7 +77,7 @@ All three labels appear across at least nine deliberately chosen submissions.
 
 **Why this target:**
 
-
+The system has three possible outcomes: high-confidence AI, high-confidence human, and unsure. If one of those labels never appears, then part of the system is effectively unreachable.
 
 ---
 
@@ -90,7 +90,7 @@ Every appeal changes status to `under_review` and creates an audit entry without
 
 **Why this target:**
 
-
+The appeal process is the primary safeguard against false positives. If appeals are not recorded correctly, there is no reliable way to review disputed decisions later.
 
 ---
 
@@ -103,7 +103,7 @@ Missing, null, blank, and over-10,000-character text receive `4xx` responses wit
 
 **Why this target:**
 
-
+Bad input should fail predictably instead of producing meaningless scores or crashing the service. Logging the rejection creates a record of what happened and makes troubleshooting easier.
 
 ---
 

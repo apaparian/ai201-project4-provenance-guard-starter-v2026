@@ -90,7 +90,7 @@ def score_to_label(score: float) -> tuple[str, str]:
         return "ai", "This was likely written with AI assistance."
     if score <= config.HUMAN_THRESHOLD:
         return "human", "This was likely written by a human author."
-    return "unsure", "A confident determination could not be made. This result is uncertain."
+    return "unsure", "A confident determination could not be made. The result is uncertain."
 
 
 def label_ranges() -> list[tuple[str, str]]:

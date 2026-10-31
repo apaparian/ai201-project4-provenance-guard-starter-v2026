@@ -135,7 +135,7 @@ The clearly AI text (the urban transportation paragraph) produced the largest di
 | Label | Score range | The exact text a reader sees |
 |---|---|---|
 | high-confidence human | 0.00-0.35 | This was likely written by a human author. |
-| unsure | 0.35-0.65 | A confident determination could not be made. This result is uncertain. |
+| unsure | 0.35-0.65 | A confident determination could not be made. The result is uncertain. |
 | high-confidence AI | 0.65-1.00 | This was likely written with AI assistance. |
 
 **Why I worded the "unsure" one this way:**

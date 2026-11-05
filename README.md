@@ -349,6 +349,79 @@ Wrote results/flood_2026-11-04_1439.md
 <!-- Every attack with its outcome and a held-or-broke mark.
      `run_attacks.py --label before` produces the table. -->
 
+**Result: 56 attacks, 23 BROKE, 33 HELD.** HELD means my defenses stopped the attack; BROKE means it got through (or the service crashed). Full run: `results/attack_run_2026-11-04_1634_before.md`.
+
+| Family | Attacks | BROKE | HELD |
+|---|---|---|---|
+| `evasion` | 10 | 9 | 1 |
+| `false_positive` | 8 | 6 | 2 |
+| `prompt_injection` | 6 | 0 | 6 |
+| `malformed` | 20 | 8 | 12 |
+| `flood_same_creator` | 12 | 0 | 12 |
+
+Caveats on the marks:
+- **RQ09, RQ10, RQ11** are marked HELD, but they returned 429 because the flood rows had already used up my address's limit, so the request never reached the route. They did not test how the service handles those bodies.
+- **Flood rows:** a 429 is the correct response, since that family tests the limiter. Four requests got through, then FL01_05 onward were rejected (limit 4 per minute).
+- **MF02** is the one auto-BROKE: a single-character input raised a `ValueError` and returned a 500, and it left no audit log entry.
+
+| ID | Family | Targeting | Status | Guess | Score | Verdict |
+|---|---|---|---|---|---|---|
+| EV01 | evasion | signal two: typos raise word variety | 200 | human | 0.318 | BROKE |
+| EV02 | evasion | signal two: broken-up sentences raise length spread | 200 | unsure | 0.416 | BROKE |
+| EV03 | evasion | signal two: a pasted quotation changes the shape | 200 | unsure | 0.559 | BROKE |
+| EV04 | evasion | signal one: unusual words raise perplexity | 200 | unsure | 0.584 | BROKE |
+| EV05 | evasion | both signals: heavy human editing pass | 200 | human | 0.306 | BROKE |
+| EV06 | evasion | signal two: one very long sentence and one very short | 200 | unsure | 0.376 | BROKE |
+| EV07 | evasion | signal two: padding with punctuation | 200 | unsure | 0.632 | BROKE |
+| EV08 | evasion | signal one: text below the token window | 200 | human | 0.319 | BROKE |
+| EV09 | evasion | both: AI text with a human opening paragraph bolted on | 200 | unsure | 0.574 | BROKE |
+| EV10 | evasion | signal two: repeated stanza structure | 200 | ai | 0.815 | HELD |
+| FP01 | false_positive | plain, clear human writing with no flourishes | 200 | unsure | 0.538 | HELD |
+| FP02 | false_positive | human writing in a formal register | 200 | ai | 0.661 | BROKE |
+| FP03 | false_positive | a non-native English speaker writing carefully | 200 | ai | 0.678 | BROKE |
+| FP04 | false_positive | a student essay written to a rubric | 200 | ai | 0.676 | BROKE |
+| FP05 | false_positive | technical documentation written by a person | 200 | ai | 0.706 | BROKE |
+| FP06 | false_positive | a person imitating a formal template | 200 | ai | 0.677 | BROKE |
+| FP07 | false_positive | human writing that repeats a phrase deliberately | 200 | ai | 0.662 | BROKE |
+| FP08 | false_positive | very short genuine human submission | 200 | human | 0.329 | HELD |
+| PI01 | prompt_injection | instruction to ignore the check | 200 | unsure | 0.366 | HELD |
+| PI02 | prompt_injection | instruction disguised as a system message | 200 | human | 0.217 | HELD |
+| PI03 | prompt_injection | instruction wrapped in the writer's voice | 200 | unsure | 0.529 | HELD |
+| PI04 | prompt_injection | attempt to make the label text hostile | 200 | unsure | 0.486 | HELD |
+| PI05 | prompt_injection | attempt to inject into the audit log | 200 | unsure | 0.549 | HELD |
+| PI06 | prompt_injection | instruction plus real human text | 200 | unsure | 0.505 | HELD |
+| MF01 | malformed | text is only whitespace | 400 | — | — | HELD |
+| MF02 | malformed | text is a single character | 500 | — | — | BROKE |
+| MF03 | malformed | text is control characters | 200 | human | 0.280 | BROKE |
+| MF04 | malformed | text is only punctuation | 200 | human | 0.207 | BROKE |
+| MF05 | malformed | text is a very long single word | 200 | ai | 0.839 | BROKE |
+| MF06 | malformed | text is emoji only | 200 | ai | 0.798 | BROKE |
+| MF07 | malformed | text is right-to-left script | 200 | ai | 0.744 | BROKE |
+| MF08 | malformed | text is 60,000 characters | 413 | — | — | HELD |
+| RQ01 | malformed | no text field at all | 400 | — | — | HELD |
+| RQ02 | malformed | no creator_id | 200 | unsure | 0.384 | BROKE |
+| RQ03 | malformed | text is a number | 400 | — | — | HELD |
+| RQ04 | malformed | text is a list | 400 | — | — | HELD |
+| RQ05 | malformed | text is null | 400 | — | — | HELD |
+| RQ06 | malformed | creator_id is an object | 200 | human | 0.270 | BROKE |
+| RQ07 | malformed | body is a JSON array, not an object | 400 | — | — | HELD |
+| RQ08 | malformed | body is unparseable JSON | 400 | — | — | HELD |
+| RQ09 | malformed | body is empty | 429 | — | — | HELD |
+| RQ10 | malformed | body is form-encoded, not JSON | 429 | — | — | HELD |
+| RQ11 | malformed | body is JSON claiming to be plain text | 429 | — | — | HELD |
+| RQ12 | malformed | deeply nested JSON | 400 | — | — | HELD |
+| FL01_01 | flood_same_creator | 20 rapid submissions from one creator | 200 | human | 0.257 | HELD |
+| FL01_02 | flood_same_creator | 20 rapid submissions from one creator | 200 | human | 0.257 | HELD |
+| FL01_03 | flood_same_creator | 20 rapid submissions from one creator | 200 | human | 0.257 | HELD |
+| FL01_04 | flood_same_creator | 20 rapid submissions from one creator | 200 | human | 0.257 | HELD |
+| FL01_05 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_06 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_07 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_08 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_09 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_10 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_11 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
+| FL01_12 | flood_same_creator | 20 rapid submissions from one creator | 429 | — | — | HELD |
 
 
 **Ten audit log entries from the run**

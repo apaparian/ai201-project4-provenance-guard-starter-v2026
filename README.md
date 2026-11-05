@@ -356,12 +356,23 @@ Wrote results/flood_2026-11-04_1439.md
 <!-- Choose entries that show the interesting failures, not the ten easiest. -->
 
 ```json
-
+{"timestamp": "2026-11-05T00:34:36+00:00", "content_id": "ac4ea52a-88db-4f20-9963-1b8b70109d6f", "creator_id": "attacker_FP03", "guess": "ai", "model_score": 0.8051, "style_score": 0.48621920281624714, "combined_score": 0.6775476811264989, "label": "This was likely written with AI assistance.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:36+00:00", "content_id": "70af09f8-7b24-4818-be44-9712a18492f5", "creator_id": "attacker_FP07", "guess": "ai", "model_score": 0.8816, "style_score": 0.33138442702946225, "combined_score": 0.6615137708117849, "label": "This was likely written with AI assistance.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:36+00:00", "content_id": "2b6cf02e-8ea4-4a18-a56f-04ab4ec0102d", "creator_id": "attacker_FP06", "guess": "ai", "model_score": 0.8814, "style_score": 0.3716373810026411, "combined_score": 0.6774949524010564, "label": "This was likely written with AI assistance.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:35+00:00", "content_id": "d8bcadf1-f589-4647-9afa-c8b5aded417e", "creator_id": "attacker_EV01", "guess": "human", "model_score": 0.1635, "style_score": 0.5493502809647747, "combined_score": 0.31784011238590987, "label": "This was likely written by a human author.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:35+00:00", "content_id": "7c8bb36e-7be6-42f0-a916-d6d1e883a3fb", "creator_id": "attacker_EV05", "guess": "human", "model_score": 0.3212, "style_score": 0.28277612970746785, "combined_score": 0.30583045188298713, "label": "This was likely written by a human author.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:37+00:00", "content_id": "8093c24b-a0fb-4381-9040-04788678001e", "creator_id": "attacker_MF06", "guess": "ai", "model_score": 0.9969, "style_score": 0.5, "combined_score": 0.7981400000000001, "label": "This was likely written with AI assistance.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:37+00:00", "content_id": "2021ef4c-ec8f-4482-bd20-ef592900af80", "creator_id": null, "guess": "unsure", "model_score": 0.2395, "style_score": 0.6, "combined_score": 0.3837, "label": "A confident determination could not be made. The result is uncertain.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:37+00:00", "content_id": "be226d37-fb89-457a-bb2a-3cb7861dd6e3", "creator_id": {"id": "x"}, "guess": "human", "model_score": 0.0492, "style_score": 0.6, "combined_score": 0.26952, "label": "This was likely written by a human author.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:36+00:00", "content_id": "6fc9bc11-3cf8-472a-8079-27eb32ee2fb3", "creator_id": "attacker_PI05", "guess": "unsure", "model_score": 0.6401, "style_score": 0.4131787929017251, "combined_score": 0.5493315171606901, "label": "A confident determination could not be made. The result is uncertain.", "status": "decided"}
+{"timestamp": "2026-11-05T00:34:37+00:00", "creator_id": "attacker_MF08", "event": "rejected", "status": "rejected", "reason": "text_too_long", "length": 57640}
+{"timestamp": "2026-11-05T00:34:37+00:00", "creator_id": "attacker_flood", "event": "rejected", "status": "rejected", "reason": "rate_limited", "limit": "4 per 1 minute"}
 ```
 
 **The single worst outcome** — the one I'd least want to explain to a writer
 whose work got caught by it:
 
+FP03, a non-native English speaker writing carefully, was labelled "likely written with AI assistance."(content_id `ac4ea52a-88db-4f20-9963-1b8b70109d6f`, combined 0.678.) The writer did nothing wrong. The model signal read their careful, regular phrasing as machine-like (0.805), and the style signal (0.486) was close to neutral, so it did little to pull the score back down. Of the six false positives, FP05 scored higher (0.706), but FP03 is the result I would be least comfortable explaining to a real user. The feature being penalized is not AI usage, but careful writing by a non-native English speaker. That creates a risk of treating writing proficiency and writing style as evidence of AI assistance.
 
 
 ---

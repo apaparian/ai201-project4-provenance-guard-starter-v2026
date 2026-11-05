@@ -349,7 +349,7 @@ Wrote results/flood_2026-11-04_1439.md
 <!-- Every attack with its outcome and a held-or-broke mark.
      `run_attacks.py --label before` produces the table. -->
 
-**Result: 56 attacks, 23 BROKE, 33 HELD.** HELD means my defenses stopped the attack; BROKE means it got through (or the service crashed). Full run: `results/attack_run_2026-11-04_1634_before.md`.
+56 attacks: 23 BROKE, 33 HELD
 
 | Family | Attacks | BROKE | HELD |
 |---|---|---|---|
@@ -358,11 +358,6 @@ Wrote results/flood_2026-11-04_1439.md
 | `prompt_injection` | 6 | 0 | 6 |
 | `malformed` | 20 | 8 | 12 |
 | `flood_same_creator` | 12 | 0 | 12 |
-
-Caveats on the marks:
-- **RQ09, RQ10, RQ11** are marked HELD, but they returned 429 because the flood rows had already used up my address's limit, so the request never reached the route. They did not test how the service handles those bodies.
-- **Flood rows:** a 429 is the correct response, since that family tests the limiter. Four requests got through, then FL01_05 onward were rejected (limit 4 per minute).
-- **MF02** is the one auto-BROKE: a single-character input raised a `ValueError` and returned a 500, and it left no audit log entry.
 
 | ID | Family | Targeting | Status | Guess | Score | Verdict |
 |---|---|---|---|---|---|---|

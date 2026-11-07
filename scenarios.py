@@ -42,7 +42,7 @@ SCENARIOS = [
     },
     {
         # Criterion 2: median AI score at least 0.20 above median human score.
-        "name": "score spread: clearly AI",
+        "name": "AI spread: clearly AI",
         "criterion": 2,
         "texts": [
             "The implementation of sustainable urban transportation requires careful consideration of several important factors. By investing in reliable public transit, expanding pedestrian infrastructure, and encouraging alternative forms of mobility, cities can reduce congestion and improve overall quality of life. These strategies also support environmental sustainability and create more efficient communities for future generations.",
@@ -53,7 +53,7 @@ SCENARIOS = [
         ],
     },
     {
-        "name": "score spread: clearly human",
+        "name": "human spread: clearly human",
         "criterion": 2,
         "texts": [
             'does big bear have a section that is coevered by a snow machine? is it accessible to the public?\n\nare there other activities, something on the lake? bikes to rent?',

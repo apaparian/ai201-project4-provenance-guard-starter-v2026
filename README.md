@@ -451,17 +451,99 @@ FP03, a non-native English speaker writing carefully, was labelled "likely writt
 
 | Criterion | Target | Run 1 | Run 2 | Run 3 | Verdict |
 |---|---|---|---|---|---|
-| 1.  |  |  |  |  |  |
-| 2.  |  |  |  |  |  |
-| 3.  |  |  |  |  |  |
-| 4.  |  |  |  |  |  |
-| 5.  |  |  |  |  |  |
+| 1. My own writing flagged as AI | ≤ 1 of 10 labelled AI | 0/10 | 0/10 | 0/10 | MET |
+| 2. Score spread (AI vs human) | median AI ≥ 0.20 above median human | +0.54 (0.76 vs 0.22) | +0.54 | +0.54 | MET |
+| 3. Label coverage | all 3 labels in ≥ 9 submissions | 3/3 | 3/3 | 3/3 | MET |
+| 4. Appeals | every appeal → `under_review`, logged, decision unchanged | 3/3 | 3/3 | 3/3 | MET |
+| 5. Bad input | 4xx, no score, logged rejection (6 cases) | 6/6 | 6/6 | 6/6 | MET |
 
 **Real output from one trial**, pasted as text, naming the file and function
-that produced it:
+that produced it. This is trial 1 of the label coverage scenario (criterion 3), from `results/run_2026-11-05_1352_before.md`, produced by `run_eval.py::main` calling `app.py::submit`. All three labels appear:
 
 ```json
-
+[
+  {
+    "status": 200,
+    "guess": "human",
+    "confidence": 0.24023999999999998,
+    "model_score": 0.0004,
+    "style_score": 0.6,
+    "label": "This was likely written by a human author.",
+    "sent": "also maybe big bear"
+  },
+  {
+    "status": 200,
+    "guess": "human",
+    "confidence": 0.27629999999999993,
+    "model_score": 0.0205,
+    "style_score": 0.6599999999999999,
+    "label": "This was likely written by a human author.",
+    "sent": "are the trails crowded in zion\n\nis yosemite trails"
+  },
+  {
+    "status": 200,
+    "guess": "unsure",
+    "confidence": 0.4134012121212121,
+    "model_score": 0.2688,
+    "style_score": 0.6303030303030303,
+    "label": "A confident determination could not be made. The result is uncertain.",
+    "sent": "is airbnb the best place to find a cabin?"
+  },
+  {
+    "status": 200,
+    "guess": "unsure",
+    "confidence": 0.5212334068741353,
+    "model_score": 0.5195,
+    "style_score": 0.5238335171853384,
+    "label": "A confident determination could not be made. The result is uncertain.",
+    "sent": "Our last trip went very well. We stayed in Yucca V"
+  },
+  {
+    "status": 200,
+    "guess": "unsure",
+    "confidence": 0.5096874955633275,
+    "model_score": 0.4785,
+    "style_score": 0.5564687389083187,
+    "label": "A confident determination could not be made. The result is uncertain.",
+    "sent": "The 1984 Summer Games propelled the Olympics into "
+  },
+  {
+    "status": 200,
+    "guess": "human",
+    "confidence": 0.28494778112523034,
+    "model_score": 0.3669,
+    "style_score": 0.16201945281307586,
+    "label": "This was likely written by a human author.",
+    "sent": "I'd like to make a Partiful event for when he's in"
+  },
+  {
+    "status": 200,
+    "guess": "ai",
+    "confidence": 0.803390046416437,
+    "model_score": 0.9106,
+    "style_score": 0.6425751160410924,
+    "label": "This was likely written with AI assistance.",
+    "sent": "Artificial intelligence is a rapidly evolving fiel"
+  },
+  {
+    "status": 200,
+    "guess": "unsure",
+    "confidence": 0.6061500439207901,
+    "model_score": 0.7604,
+    "style_score": 0.37477510980197515,
+    "label": "A confident determination could not be made. The result is uncertain.",
+    "sent": "The implementation of sustainable urban transporta"
+  },
+  {
+    "status": 200,
+    "guess": "ai",
+    "confidence": 0.7604981672153899,
+    "model_score": 0.9188,
+    "style_score": 0.5230454180384747,
+    "label": "This was likely written with AI assistance.",
+    "sent": "Regular physical exercise offers numerous benefits"
+  }
+]
 ```
 
 **Diagnoses**
@@ -480,7 +562,32 @@ that produced it:
 
      Look for a pattern. Five failures on one signal is one problem, not five. -->
 
+Criteria: none. All five criteria were met in all three runs, so there is nothing to diagnose there. Criterion 1 passing is weaker than it looks. The ten pieces are casual chat messages, while the attack set shows that formal and carefully structured prose is where the false positives occur.
 
+Broken attacks: These fall into four patterns.
+
+1. False positives: FP02-FP07 (6 attacks). Stage: signal one, then the label mapping.
+Careful, regular human writing received high model scores: FP03 scored 0.805, FP06 scored 0.881, and FP07 scored 0.882. detector.py::model_signal measures predictability, and predictable writing is not the same thing as AI writing. The style signal stayed close to neutral at 0.486, 0.372, and 0.331, so it did little to offset those scores. With a 0.65 AI threshold, all three were pushed into the AI label. This is the blind spot of signal one: formal human writing can look machine-like.
+
+2. Evasion: EV01-EV09 (9 attacks). Stage: signal one and signal two, resulting in a label-mapping problem.
+Most of these attacks succeeded because there is not much margin above the AI threshold. My own clearly AI sample only scored 0.616 during criterion testing and was labelled unsure. Small changes to either signal were enough to move AI text out of the AI category.
+
+EV01 used typos and pushed the model score down to 0.164.
+EV04 used unusual words and scored 0.611.
+EV08 used very short text and scored 0.245.
+EV02 and EV06 increased sentence-length variation, which dropped the style score to 0.150 and 0.080.
+EV03, EV07, and EV09 kept both signals in the middle and finished as unsure at 0.559, 0.632, and 0.574.
+EV05 lowered both signals and was classified as human.
+
+EV10 was the only evasion attack that held. Its repeated structure pushed the model score to 0.979 and kept it comfortably above the AI threshold.
+
+3. Non-prose input: MF02-MF07 (6 attacks). Stage: the route.
+The route validates missing text, blank text, and oversized text, but it does not validate whether the input is meaningful prose. Control characters, punctuation-only text, a very long word, emoji-only text, and right-to-left script all received scores. In those situations the detector still returns a value, and the style signal usually falls back to about 0.5 because there is little structure to analyze. MF02 exposed a separate issue: a one-character input raised ValueError inside detector.py, which was not caught and produced a 500 error.
+
+4. creator_id validation: RQ02 and RQ06 (2 attacks). Stage: the route.
+creator_id is accepted with very little validation. RQ02 was accepted with a null creator_id, and RQ06 was accepted with an object instead of a string. Both requests were scored and logged normally. This also weakens the rate limiter, since rate limiting depends on creator_id whenever one is provided.
+
+Note: RQ09-RQ11 returned 429 responses from the rate limiter before reaching the route, so these cases demonstrate that the limiter worked. They do not demonstrate that the route validation itself would have held.
 
 ---
 

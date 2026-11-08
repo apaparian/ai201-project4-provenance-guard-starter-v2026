@@ -208,8 +208,8 @@ def submit():
         payload = {}
         
     content_id = str(uuid.uuid4())
-    creator_id = payload.get("creator_id") or f"anon_{uuid.uuid4()}"
-    
+    creator_id = payload.get("creator_id")
+
     text = payload.get("text")
 
     if creator_id is not None and not isinstance(creator_id, str):
@@ -218,6 +218,9 @@ def submit():
             "error": "invalid_creator_id",
             "message": "creator_id must be a string.",
         }), 400
+
+    if creator_id is None or not creator_id.strip():
+        creator_id = f"anon_{uuid.uuid4()}"
 
     if not isinstance(text, str) or not text.strip():
         audit.log_rejection(creator_id=creator_id, reason="missing_or_blank_text")

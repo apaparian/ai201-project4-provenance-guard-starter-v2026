@@ -573,8 +573,8 @@ Careful, regular human writing received high model scores: FP03 scored 0.805, FP
 Most of these attacks succeeded because there is not much margin above the AI threshold. My own clearly AI sample only scored 0.616 during criterion testing and was labelled unsure. Small changes to either signal were enough to move AI text out of the AI category.
 
 EV01 used typos and pushed the model score down to 0.164.
-EV04 used unusual words and scored 0.611.
-EV08 used very short text and scored 0.245.
+EV04 used unusual words and had a model score of 0.611.
+EV08 used very short text and had a model score of 0.245.
 EV02 and EV06 increased sentence-length variation, which dropped the style score to 0.150 and 0.080.
 EV03, EV07, and EV09 kept both signals in the middle and finished as unsure at 0.559, 0.632, and 0.574.
 EV05 lowered both signals and was classified as human.

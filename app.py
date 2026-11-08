@@ -24,6 +24,7 @@ Routes:
     GET  /health      is the service up, and is the model loaded
 """
 
+import re
 import uuid
 
 from flask import Flask, jsonify, request
@@ -207,20 +208,56 @@ def submit():
         payload = {}
         
     content_id = str(uuid.uuid4())
-    creator_id = payload.get("creator_id")
+    creator_id = payload.get("creator_id") or f"anon_{uuid.uuid4()}"
     
     text = payload.get("text")
 
+    if creator_id is not None and not isinstance(creator_id, str):
+        audit.log_rejection(creator_id=None, reason="invalid_creator_id")
+        return jsonify({
+            "error": "invalid_creator_id",
+            "message": "creator_id must be a string.",
+        }), 400
+
     if not isinstance(text, str) or not text.strip():
         audit.log_rejection(creator_id=creator_id, reason="missing_or_blank_text")
-        return jsonify({"error": "no_text", "message": "Send non-empty text."}), 400
+        return jsonify({
+            "error": "no_text",
+            "message": "Send non-empty text.",
+        }), 400
 
     if len(text) > 10000:
         audit.log_rejection(creator_id=creator_id, reason="text_too_long", length=len(text))
-        return jsonify({"error": "text_too_long", "message": f"Text must be 10000 characters or fewer."}), 413
+        return jsonify({
+            "error": "text_too_long",
+            "message": "Text must be 10000 characters or fewer.",
+        }), 413
 
+    def stripped_text(text: str) -> str:
+        text = re.sub(r"\x1b\[[0-9;?]*[ -/]*[@-~]", "", text)
+        text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", text)
+        return text
 
-    model_score = detector.model_signal(text)
+    if len(stylometry.words(stripped_text(text))) < 3:
+        audit.log_rejection(
+            creator_id=creator_id,
+            reason="text_not_scorable",
+            length=len(text),
+        )
+        return jsonify({
+            "error": "text_not_scorable",
+            "message": "Send a short piece of writing.",
+        }), 400
+
+    try:
+        model_score = detector.model_signal(text)
+    except ValueError:
+        audit.log_rejection(creator_id=creator_id, reason="text_not_scorable")
+        return jsonify({
+            "error": "text_not_scorable",
+            "message": "That text couldn't be scored.",
+        }), 400
+
     style_score = stylometry.style_signal(text)
     combined_score = scoring.combine_signals(model_score, style_score)
 
@@ -239,6 +276,7 @@ def submit():
 
     return jsonify({
         "content_id": content_id,
+        "creator_id": creator_id,
         "guess": guess,
         "confidence": combined_score,
         "label": label,
